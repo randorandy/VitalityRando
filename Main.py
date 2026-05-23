@@ -62,7 +62,7 @@ def Main(options: GameOptions, romWriter: Optional[RomWriter] = None) -> None:
     rom_name = write_rom(game)
     write_spoiler_file(game, rom_name)
 
-def generate(options: dict) -> Game:
+def generate(options: GameOptions) -> Game:
     areaA = ""
 
     # hudFlicker=""
@@ -81,8 +81,8 @@ def generate(options: dict) -> Game:
     #if options['logic'] == 'casual':
     #    logic = Casual
     game = Game(options,
-                logic,
                 csvdict,
+                options.visibility,
                 areaA == "A",
                 VanillaAreas())
     while not seedComplete :
@@ -109,7 +109,7 @@ def generate(options: dict) -> Game:
 
 
 
-def assumed_fill(game: Game) -> tuple[bool]:
+def assumed_fill(game: Game) -> bool:
     for loc in game.all_locations.values():
         loc["item"] = None
     dummy_locations: list[Location] = []
@@ -137,7 +137,7 @@ def assumed_fill(game: Game) -> tuple[bool]:
             #completable, _, _ = solve(game)
             #completable = game.all_locations["Morph"]["item"] == Items.Morph
             completable = True
-            fill_algorithm.validate(game)
+            #fill_algorithm.validate(game)
             if completable:
                 print("Item placements successful.")
             return completable
@@ -281,13 +281,15 @@ if __name__ == "__main__":
     import time
     t0 = time.perf_counter()
     options = GameOptions(
-        logic=Expert,
+        #logic=Expert,
         fill_choice='D',
-        can=[],
+        visibility=True
+        #can=[],
     )
     args = sys.argv[1:]
     while args:
         option = args.pop(0)
+        '''
         if option in ['-l', '--logic']:
             logic = args.pop(0).lower()
             if logic.startswith('e'):
@@ -296,14 +298,16 @@ if __name__ == "__main__":
                 options.logic = Casual
             else:
                 print(f'Warning: unrecognized logic option "{logic}"')
-        elif option in ['-s', '--seed']:
+        '''
+        #elif
+        if option in ['-s', '--seed']:
             options.seed = int(args.pop(0))
         elif option == '-d':
             options.fill_choice = 'D'
         elif option == '-mm':
             options.fill_choice = 'MM'
-        elif option == '--can':
-            options.can = args.pop(0).split(',')
+        #elif option == '--can':
+        #    options.can = args.pop(0).split(',')
         else:
             print(f'Warning: unrecognized option "{option}"')
 
